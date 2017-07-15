@@ -61,6 +61,14 @@ def tokenize(raw_course_line_halves):
             """,
             regex.VERBOSE
         )
+        tokenize.info_choose = regex.compile(
+            r"""
+            ^\(?(?:Select|Choose|Complete)\ 
+            (?:([Oo]ne|ONE|1)|([Tt]wo|TWO|2)|([Tt]hree|THREE|3)|([Ff]our|FOUR|4)|([Ff]ive|FIVE|5)|([Ss]ix|SIX|6))
+            \ .*course
+            """,
+            regex.VERBOSE
+        )
         tokenize.special_info_pattern = regex.compile(r'\([A-Z\d]')
         tokenize.parenthesized_info_opening = regex.compile(r'^\([A-Z\d]')
         tokenize.parenthesized_info_closing = regex.compile(r'^[^)]+\) *$')
@@ -91,6 +99,11 @@ def tokenize(raw_course_line_halves):
         if match:
             if processing_info_token:
                 token = {'info': token['info'].strip()}
+                info_choose_match = tokenize.info_choose.match(token['info'])
+                if info_choose_match:
+                    for i, number_match in enumerate(info_choose_match.groups()):
+                        if number_match:
+                            token['choose'] = i + 1
                 tokens.append(token)
                 token = None
                 processing_info_token = False
@@ -154,6 +167,11 @@ def tokenize(raw_course_line_halves):
                 elif processing_parenthesized_info \
                 and tokenize.parenthesized_info_closing.match(line):
                     token['info'] += line.strip()
+                    info_choose_match = tokenize.info_choose.match(token['info'])
+                    if info_choose_match:
+                        for i, number_match in enumerate(info_choose_match.groups()):
+                            if number_match:
+                                token['choose'] = i + 1
                     tokens.append(token)
                     token = None
                     processing_parenthesized_info = False
@@ -175,6 +193,7 @@ def tokenize(raw_course_line_halves):
     return tokens
 
 tokenize.pattern = None
+tokenize.info_choose = None
 tokenize.parenthesized_info_opening = None
 tokenize.parenthesized_info_closing = None
 tokenize.blank_line = None
