@@ -63,9 +63,7 @@ def tokenize(raw_course_line_halves):
         )
         tokenize.info_choose = regex.compile(
             r"""
-            ^\(?(?:Select|Choose|Complete)\ 
-            (?:([Oo]ne|ONE|1)|([Tt]wo|TWO|2)|([Tt]hree|THREE|3)|([Ff]our|FOUR|4)|([Ff]ive|FIVE|5)|([Ss]ix|SIX|6))
-            \ .*course
+            ^\(?(?:Select|Choose|Complete) (?:([Oo]ne|ONE|1)|([Tt]wo|TWO|2)|([Tt]hree|THREE|3)|([Ff]our|FOUR|4)|([Ff]ive|FIVE|5)|([Ss]ix|SIX|6)) .*course
             """,
             regex.VERBOSE
         )
